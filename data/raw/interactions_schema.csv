@@ -1,0 +1,1 @@
+session_id,user_id,restaurant_id,current_cart_items,cart_value,timestamp,day_of_week,meal_time,candidate_item_id,is_accepted
