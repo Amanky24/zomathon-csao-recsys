@@ -1,6 +1,84 @@
 import pandas as pd
 import numpy as np
 
+PERSONA_CONFIG = {
+    'The Strict Veg Family': {
+        'segment': 'Premium', 'dietary': 'Veg', 'price_tolerance': 0.35,
+        'boosts': {'Accompaniment': 0.15, 'Dessert': 0.10},
+        'rejects': ['Non-Veg']
+    },
+    'Late-Night Solo Binge': {
+        'segment': 'Budget', 'dietary': 'Mixed', 'price_tolerance': 0.15,
+        'boosts': {'Accompaniment/Dip': 0.30, 'Beverage': 0.15},
+        'rejects': ['Slow', 'Main_Course']
+    },
+    'The Protein Junkie': {
+        'segment': 'Premium', 'dietary': 'Non-Veg', 'price_tolerance': 0.25,
+        'boosts': {'Starter': 0.20, 'Soup': 0.15},
+        'rejects': ['Dessert', 'Bread']
+    },
+    'Weekend Party Host': {
+        'segment': 'Premium', 'dietary': 'Mixed', 'price_tolerance': 0.50,
+        'boosts': {'Beverage': 0.20, 'Starter': 0.15},
+        'rejects': ['Single-Serve']
+    },
+    'The Corporate Luncher': {
+        'segment': 'Budget', 'dietary': 'Mixed', 'price_tolerance': 0.20,
+        'boosts': {'Beverage': 0.10},
+        'rejects': ['Slow', 'Dessert']
+    },
+    'The Discount Chaser': {
+        'segment': 'Budget', 'dietary': 'Mixed', 'price_tolerance': 0.0, # Cap at 40 INR handled in logic
+        'boosts': {'Accompaniment/Dip': 0.25, 'Accompaniment': 0.10},
+        'rejects': ['High-Price'] 
+    },
+    'The Sweet Tooth': {
+        'segment': 'Mid-Tier', 'dietary': 'Mixed', 'price_tolerance': 0.25,
+        'boosts': {'Dessert': 0.35, 'Beverage': 0.05},
+        'rejects': ['Soup', 'Starter']
+    },
+    'The Carb Loader': {
+        'segment': 'Mid-Tier', 'dietary': 'Veg', 'price_tolerance': 0.25,
+        'boosts': {'Accompaniment': 0.20, 'Beverage': 0.10},
+        'rejects': ['Soup']
+    },
+    'The Spice Fiend': {
+        'segment': 'Mid-Tier', 'dietary': 'Mixed', 'price_tolerance': 0.25,
+        'boosts': {'Beverage': 0.25, 'Accompaniment/Dip': 0.15},
+        'rejects': ['Sweet']
+    },
+    'The Comfort Eater': {
+        'segment': 'Mid-Tier', 'dietary': 'Veg', 'price_tolerance': 0.25,
+        'boosts': {'Accompaniment': 0.15, 'Soup': 0.10},
+        'rejects': ['Spicy', 'Fast Food']
+    },
+    'The Beverage Addict': {
+        'segment': 'Premium', 'dietary': 'Mixed', 'price_tolerance': 0.35,
+        'boosts': {'Beverage': 0.40},
+        'rejects': ['Accompaniment/Dip', 'Soup']
+    },
+    'The Strictly Meat Solo': {
+        'segment': 'Mid-Tier', 'dietary': 'Non-Veg', 'price_tolerance': 0.25,
+        'boosts': {'Starter': 0.15, 'Beverage': 0.10},
+        'rejects': ['Veg Mains', 'Dessert']
+    },
+    'The Indian Gravy Saver': {
+        'segment': 'Budget', 'dietary': 'Mixed', 'price_tolerance': 0.20,
+        'boosts': {'Accompaniment': 0.35},
+        'rejects': ['Starter', 'Dessert']
+    },
+    'The "Just a Snack" User': {
+        'segment': 'Budget', 'dietary': 'Mixed', 'price_tolerance': 0.10,
+        'boosts': {'Accompaniment/Dip': 0.20, 'Beverage': 0.10},
+        'rejects': ['Main_Course', 'High-Price']
+    },
+    'The Experimental Foodie': {
+        'segment': 'Premium', 'dietary': 'Mixed', 'price_tolerance': 0.40,
+        'boosts': {'Dessert': 0.15, 'Starter': 0.15},
+        'rejects': ['Basic Accompaniments']
+    }
+}
+
 class CSAODataSimulator:
     """
     Stochastic data generation engine for the Cart Super Add-On (CSAO) Recommendation System.
@@ -21,81 +99,59 @@ class CSAODataSimulator:
 
     def calculate_probability(self, cart, candidate, user, context):
         """
-        Calculates the conditional probability of a candidate item being accepted into the cart.
-        Ingests the current cart state, candidate features, user profile, and session context.
+        Calculates the conditional probability using strict Persona mapping and Context.
         """
-        
-        # 1. Initialize with Global Baseline
+        # 1. Initialize with Global Baseline Matrix
         dominant_cat = cart['dominant_cuisine'] 
         candidate_cat = candidate['macro_category']
-        
-        # Base probability derived from the item's historical global attach rate [cite: 118]
         prob = candidate['restaurant_item_attach']
         
-        # Apply cross-category affinity modifier if a valid transition exists
         if dominant_cat in self.base_matrix and candidate_cat in self.base_matrix[dominant_cat]:
             prob += self.base_matrix[dominant_cat][candidate_cat]
 
-        # 2. Apply Deterministic Business Rules & Heuristics
+        # 2. --- THE NEW PERSONA ENGINE ---
+        persona_name = user['user_demographic_cluster']
         
-        # --- Price & Promotion Sensitivity ---
-        if (candidate['price'] / cart['current_cart_value_inr']) > 0.25:
-            prob = 0.02  # The Price Wall Constraint
+        # If the user has a known persona, apply their strict PDF rules
+        if persona_name in PERSONA_CONFIG:
+            persona_rules = PERSONA_CONFIG[persona_name]
             
-        if user['user_segment'] == 'Budget' and candidate['price'] > 99:
-            prob = 0.05  # Budget Cap Hard Limit
+            # A. Price Tolerance Logic
+            cart_val = max(cart['current_cart_value_inr'], 1) # Prevent divide-by-zero
+            if (candidate['price'] / cart_val) > persona_rules['price_tolerance']:
+                prob = 0.02 # They will almost never accept an item this expensive relative to their cart
+                
+            # B. Affinity Boosts
+            if candidate_cat in persona_rules['boosts']:
+                prob += persona_rules['boosts'][candidate_cat]
+                
+            # C. Hard Rejections (The 0.0 Blocks)
+            rejects = persona_rules['rejects']
             
-        if user['discount_reliance'] == True and candidate['macro_category'] == 'Accompaniment/Dip':
-            prob += 0.20 # Discount Chaser Affinity
+            if 'Non-Veg' in rejects and candidate['is_veg'] == False:
+                prob = 0.0 # Strict Veg block
+            elif 'Slow' in rejects and candidate['prep_time_tier'] == 'Slow':
+                prob = 0.0 # Impatient user block
+            elif candidate_cat in rejects: 
+                prob = 0.0 # General category block (e.g., hates Soup)
+            elif 'Single-Serve' in rejects and candidate['portion_size'] == 'Single':
+                prob = 0.0 # Party host block
 
-        # --- Cart Composition & Sequential Dependencies ---
-        if cart['has_main_course'] and cart['has_beverage'] and not cart['has_dessert']: 
-            if candidate['macro_category'] == 'Dessert': 
-                prob = 0.40 # Meal Finisher Completion Logic
-                
-        if context['restaurant_type'] == 'QSR/Fast_Food' and not cart['has_starter_or_side']:
-            if candidate['macro_category'] == 'Starter':
-                prob = 0.60 # QSR Structural Baseline
-                
-        if cart['time_since_last_add'] > 45 and candidate['price'] < 50: 
-            prob += 0.25 # Staller/Hesitation Conversion Trigger
-
-        # --- Spatio-Temporal & Environmental Context ---
+        # 3. Apply Remaining Spatio-Temporal & Logistics Rules
+        # (These apply to the physical world, regardless of the user's persona)
         if context['weather_proxy'] == 'Rainy/Cold' and candidate['temperature_state'] == 'Hot':
-            prob += 0.30 # Weather-Driven Comfort Affinity
+            prob += 0.30 
             
         if context['delivery_zone_type'] == 'Office' and context['time_of_day'] == 'Lunch' and candidate['prep_time_tier'] == 'Fast':
-            prob += 0.20 # Office Lunch Velocity Requirement
+            prob += 0.20 
             
-        if context['is_weekend'] == True and candidate['health_index'] == 'Indulgent':
-            prob = 0.35 # Weekend Indulgence Override
-
-        # --- Dietary & Health Constraints ---
-        if cart['cart_avg_health_index'] == 'Low_Calorie' and candidate['health_index'] == 'Indulgent':
-            prob = 0.01 # Health Halo Suppression
-            
-        if cart['cart_dietary_flag'] == 'Veg' and candidate['is_veg'] == False:
-            prob = 0.00 # Strict Dietary Wall (Absolute Block)
-
-        # --- Fulfillment & Operational Constraints ---
         if context['transit_distance_km'] > 7 and candidate['temperature_state'] == 'Cold':
-            prob = 0.02 # Melt Risk Distance Suppression
+            prob = 0.02 # Melt Risk
             
         if context['restaurant_busyness'] > 8 and candidate['prep_time_tier'] == 'Slow':
             prob = 0.00 # Kitchen Load-Balancing Block
 
-        # --- Social Proof & Order Scale ---
-        if cart['current_item_count'] == 1 and candidate['portion_size'] == 'Family_Pack':
-            prob = 0.01 # Single-User Portion Mismatch
-            
-        if cart['current_item_count'] > 3 and candidate['portion_size'] == 'Sharing':
-            prob += 0.25 # Multi-User Sharing Affinity
-            
-        if cart['item_trending_score'] > 80:
-            prob += 0.15 # Local Trending / Virality Boost
-
-        # 3. Output Bound Enforcement
-        # Ensure final probability remains strictly within [0.0, 1.0] mathematical bounds
+        # 4. Output Bound Enforcement
         return max(0.0, min(1.0, prob))
 
     def simulate_decision(self, probability):
