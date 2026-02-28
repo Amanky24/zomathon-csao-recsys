@@ -1,1 +1,1 @@
-restaurant_id,cuisine_type,price_range,rating,delivery_rating,order_volume,is_chain
+restaurant_id,restaurant_type,primary_cuisine,avg_cost_for_two
