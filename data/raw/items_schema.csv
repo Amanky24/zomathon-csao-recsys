@@ -1,1 +1,1 @@
-item_id,restaurant_id,item_name,macro_category,price,is_veg
+item_id,restaurant_id,item_name,macro_category,price,is_veg,prep_time_tier,flavor_profile,temperature_state,portion_size,health_index,allergen_tags,packaging_compatibility,restaurant_item_attach
