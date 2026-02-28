@@ -1,0 +1,110 @@
+item_id,restaurant_id,item_name,macro_category,price,is_veg,prep_time_tier,flavor_profile,temperature_state,portion_size,health_index,allergen_tags,packaging_compatibility,restaurant_item_attach
+PFC_001,PFC,Mint Mojito Blast,Beverage,129,1,Fast,Tangy,Cold,Single_Serve,Indulgent,[],1,0.15
+PFC_002,PFC,Chocolate Milkshake,Beverage,79,1,Fast,Sweet,Cold,Single_Serve,Indulgent,[Dairy],1,0.12
+PFC_003,PFC,Cold Coffee with Ice Cream,Beverage,109,1,Fast,Sweet,Cold,Single_Serve,Indulgent,[Dairy],1,0.1
+PFC_004,PFC,Tawa Roti,Accompaniment,10,1,Fast,Savory,Hot,Single_Serve,Low_Calorie,[Gluten],1,0.85
+PFC_005,PFC,Butter Garlic Naan,Accompaniment,65,1,Standard,Savory,Hot,Single_Serve,Indulgent,"[Gluten, Dairy]",1,0.6
+PFC_006,PFC,Onion Raita,Accompaniment,35,1,Fast,Tangy,Cold,Sharing,Low_Calorie,[Dairy],0,0.45
+PFC_007,PFC,Hot Brownie,Dessert,80,1,Fast,Sweet,Hot,Single_Serve,Indulgent,"[Gluten, Dairy]",1,0.2
+PFC_008,PFC,Sizzling Brownie with Ice Cream,Dessert,179,1,Standard,Sweet,Hot,Sharing,Indulgent,"[Gluten, Dairy]",0,0.08
+PFC_009,PFC,Chicken Tikka Masala (Half),Main_Course,159,0,Standard,Spicy,Hot,Sharing,High_Protein,[Dairy],0,0.05
+PFC_010,PFC,Chicken Handi (12 pcs),Main_Course,659,0,Slow,Spicy,Hot,Family_Pack,Indulgent,[Dairy],0,0.02
+PFC_011,PFC,Paneer Butter Masala,Main_Course,189,1,Standard,Savory,Hot,Sharing,High_Protein,[Dairy],0,0.05
+PFC_012,PFC,Veg Biryani (Half),Main_Course,89,1,Standard,Spicy,Hot,Single_Serve,Indulgent,[],1,0.04
+PFC_013,PFC,Chicken Biryani (Full),Main_Course,169,0,Standard,Spicy,Hot,Sharing,High_Protein,[],1,0.06
+PFC_014,PFC,"Exotica Special Pizza (8"" Regular)",Main_Course,289,1,Standard,Savory,Hot,Sharing,Indulgent,"[Gluten, Dairy]",1,0.05
+PFC_015,PFC,"Chicken Tikka Pizza (8"" Regular)",Main_Course,299,0,Standard,Spicy,Hot,Sharing,Indulgent,"[Gluten, Dairy]",1,0.05
+PFC_016,PFC,Veg Cheese Salad Burger,Starter,69,1,Fast,Savory,Hot,Single_Serve,Indulgent,"[Gluten, Dairy]",1,0.15
+PFC_017,PFC,Crunchy Chicken Burger Combo,Main_Course,219,0,Standard,Savory,Hot,Single_Serve,Indulgent,[Gluten],1,0.08
+PFC_018,PFC,Chicken Tikka Wrap,Starter,149,0,Fast,Spicy,Hot,Single_Serve,High_Protein,[Gluten],1,0.12
+PFC_019,PFC,Cheesy Garlic Bread,Accompaniment,129,1,Fast,Savory,Hot,Sharing,Indulgent,"[Gluten, Dairy]",1,0.35
+PFC_020,PFC,White Sauce Pasta (Veg),Main_Course,149,1,Standard,Savory,Hot,Single_Serve,Indulgent,"[Gluten, Dairy]",0,0.04
+PFC_021,PFC,Chicken Masala (Half),Main_Course,119,0,Standard,Spicy,Hot,Sharing,High_Protein,[],0,0.05
+PFC_022,PFC,Chicken Masala (Full),Main_Course,179,0,Standard,Spicy,Hot,Family_Pack,High_Protein,[],0,0.02
+PFC_023,PFC,Chicken Butter Masala (Half),Main_Course,129,0,Standard,Savory,Hot,Sharing,Indulgent,[Dairy],0,0.05
+PFC_024,PFC,Chicken Kolhapuri (Half),Main_Course,129,0,Standard,Spicy,Hot,Sharing,High_Protein,[],0,0.05
+PFC_025,PFC,Chicken Keema Masala (Half),Main_Course,129,0,Standard,Spicy,Hot,Sharing,High_Protein,[],0,0.05
+PFC_026,PFC,Chicken Patiala (B/L),Main_Course,259,0,Standard,Spicy,Hot,Sharing,Indulgent,[Dairy],0,0.03
+PFC_027,PFC,Chicken Handi (12 pcs),Main_Course,659,0,Slow,Spicy,Hot,Family_Pack,High_Protein,[Dairy],0,0.01
+PFC_028,PFC,Chicken Tikka Masala (Half),Main_Course,159,0,Standard,Spicy,Hot,Sharing,High_Protein,[Dairy],0,0.05
+PFC_029,PFC,Tandoori Chicken Butter Masala (Half),Main_Course,189,0,Standard,Spicy,Hot,Sharing,Indulgent,[Dairy],0,0.04
+PFC_030,PFC,Paneer Masala,Main_Course,149,1,Standard,Savory,Hot,Sharing,High_Protein,[Dairy],0,0.05
+PFC_031,PFC,Paneer Butter Masala,Main_Course,189,1,Standard,Savory,Hot,Sharing,Indulgent,[Dairy],0,0.05
+PFC_032,PFC,Paneer Kolhapuri,Main_Course,189,1,Standard,Spicy,Hot,Sharing,High_Protein,[Dairy],0,0.05
+PFC_033,PFC,Palak Paneer,Main_Course,189,1,Standard,Savory,Hot,Sharing,High_Protein,[Dairy],0,0.05
+PFC_034,PFC,Paneer Mutter Makai Masala,Main_Course,199,1,Standard,Spicy,Hot,Sharing,High_Protein,[Dairy],0,0.05
+PFC_035,PFC,Fish Masala (4pcs),Main_Course,239,0,Standard,Savory,Hot,Sharing,High_Protein,[Seafood],0,0.03
+PFC_036,PFC,Fish Tikka Masala (4pcs),Main_Course,279,0,Standard,Spicy,Hot,Sharing,High_Protein,[Seafood],0,0.03
+PFC_037,PFC,Prawns Masala (6pcs),Main_Course,289,0,Standard,Savory,Hot,Sharing,High_Protein,[Seafood],0,0.02
+PFC_038,PFC,Prawns Curry (6pcs),Main_Course,289,0,Standard,Savory,Hot,Sharing,High_Protein,[Seafood],0,0.02
+PFC_039,PFC,Masala Boiled Egg (2pcs),Starter,39,0,Fast,Spicy,Hot,Single_Serve,High_Protein,[Egg],1,0.15
+PFC_040,PFC,Omlet / Poach / Bhurji (3 eggs),Starter,69,0,Fast,Savory,Hot,Single_Serve,High_Protein,[Egg],1,0.1
+PFC_041,PFC,Egg Curry (2 eggs),Main_Course,89,0,Standard,Savory,Hot,Sharing,High_Protein,[Egg],0,0.06
+PFC_042,PFC,Egg Bhurji Curry,Main_Course,119,0,Standard,Savory,Hot,Sharing,High_Protein,[Egg],0,0.05
+PFC_043,PFC,Dal Fry (yellow),Main_Course,79,1,Standard,Savory,Hot,Sharing,Low_Calorie,[],0,0.4
+PFC_044,PFC,Dal Tadka (yellow),Main_Course,89,1,Standard,Spicy,Hot,Sharing,Low_Calorie,[],0,0.4
+PFC_045,PFC,Double Mirch Dal Tadka,Main_Course,99,1,Standard,Spicy,Hot,Sharing,Low_Calorie,[],0,0.3
+PFC_046,PFC,Dal Tadka (black),Main_Course,119,1,Standard,Savory,Hot,Sharing,High_Protein,[],0,0.35
+PFC_047,PFC,Egg Dal Tadka (black),Main_Course,129,0,Standard,Savory,Hot,Sharing,High_Protein,[Egg],0,0.25
+PFC_048,PFC,Mixed Veg,Main_Course,129,1,Standard,Savory,Hot,Sharing,Low_Calorie,[],0,0.05
+PFC_049,PFC,Veg Kolhapuri,Main_Course,149,1,Standard,Spicy,Hot,Sharing,Low_Calorie,[],0,0.05
+PFC_050,PFC,Mushroom Masala,Main_Course,159,1,Standard,Savory,Hot,Sharing,Low_Calorie,[],0,0.05
+PFC_051,PFC,Stuffed Capsicum,Main_Course,209,1,Slow,Savory,Hot,Sharing,Low_Calorie,[],0,0.02
+PFC_052,PFC,Chana Masala,Main_Course,129,1,Standard,Savory,Hot,Sharing,High_Protein,[],0,0.05
+PFC_053,PFC,Egg Fried Rice,Main_Course,139,0,Standard,Savory,Hot,Single_Serve,High_Protein,[Egg],0,0.08
+PFC_054,PFC,Chicken Schezwan Fried Rice,Main_Course,169,0,Standard,Spicy,Hot,Single_Serve,High_Protein,[],0,0.08
+PFC_055,PFC,Prawns Schezwan Fried Rice,Main_Course,249,0,Standard,Spicy,Hot,Single_Serve,High_Protein,[Seafood],0,0.05
+PFC_056,PFC,Veg Biryani (Half),Main_Course,89,1,Standard,Savory,Hot,Single_Serve,Indulgent,[],0,0.05
+PFC_057,PFC,Chicken Biryani (Hyderabadi Dum),Main_Course,109,0,Standard,Savory,Hot,Single_Serve,High_Protein,[],0,0.05
+PFC_058,PFC,Tandoori Chicken Biryani,Main_Course,239,0,Slow,Spicy,Hot,Sharing,Indulgent,[Dairy],0,0.02
+PFC_059,PFC,Hakka Noodles (Veg),Main_Course,109,1,Standard,Savory,Hot,Single_Serve,Indulgent,[Gluten],0,0.1
+PFC_060,PFC,Schezwan Noodles (Egg),Main_Course,139,0,Standard,Spicy,Hot,Single_Serve,Indulgent,"[Gluten, Egg]",0,0.08
+PFC_061,PFC,Chilli Garlic Noodles (Gravy) (Chicken),Main_Course,179,0,Standard,Spicy,Hot,Single_Serve,Indulgent,[Gluten],0,0.05
+PFC_062,PFC,Pan Fry Noodles (Gravy) (Prawns),Main_Course,199,0,Slow,Savory,Hot,Single_Serve,Indulgent,"[Gluten, Seafood]",0,0.02
+PFC_063,PFC,Steamed Rice (Half),Accompaniment,29,1,Fast,Savory,Hot,Single_Serve,Low_Calorie,[],0,0.8
+PFC_064,PFC,Jeera Rice,Accompaniment,129,1,Standard,Savory,Hot,Sharing,Low_Calorie,[],0,0.6
+PFC_065,PFC,Dal Khichdi,Main_Course,139,1,Standard,Savory,Hot,Single_Serve,Low_Calorie,[],0,0.05
+PFC_066,PFC,Crunchy Veggie Wrap,Starter,129,1,Fast,Savory,Hot,Single_Serve,Indulgent,[Gluten],1,0.1
+PFC_067,PFC,Chicken Tikka Wrap,Starter,149,0,Fast,Spicy,Hot,Single_Serve,High_Protein,"[Gluten, Dairy]",1,0.1
+PFC_068,PFC,Paneer Tikka Roll,Starter,129,1,Fast,Spicy,Hot,Single_Serve,High_Protein,"[Gluten, Dairy]",1,0.1
+PFC_069,PFC,Chicken Seekh Kabab Roll,Starter,129,0,Fast,Spicy,Hot,Single_Serve,High_Protein,[Gluten],1,0.1
+PFC_070,PFC,Simply Veggie Grill Sandwich,Starter,79,1,Fast,Savory,Hot,Single_Serve,Low_Calorie,[Gluten],1,0.15
+PFC_071,PFC,Chicken Grill Sandwich,Starter,129,0,Fast,Savory,Hot,Single_Serve,High_Protein,[Gluten],1,0.12
+PFC_072,PFC,Sweet Corn Garlic Bread,Accompaniment,129,1,Fast,Sweet,Hot,Sharing,Indulgent,"[Gluten, Dairy]",1,0.4
+PFC_073,PFC,Cheesy Garlic Bread,Accompaniment,129,1,Fast,Savory,Hot,Sharing,Indulgent,"[Gluten, Dairy]",1,0.5
+PFC_074,PFC,White Sauce Pasta (Veg),Main_Course,149,1,Standard,Savory,Hot,Single_Serve,Indulgent,"[Gluten, Dairy]",0,0.05
+PFC_075,PFC,Red Sauce Pasta (Non-Veg),Main_Course,159,0,Standard,Savory,Hot,Single_Serve,Indulgent,"[Gluten, Dairy]",0,0.05
+PFC_076,PFC,Aaloo Tikki Burger,Main_Course,89,1,Fast,Savory,Hot,Single_Serve,Indulgent,[Gluten],1,0.08
+PFC_077,PFC,Aaloo Tikki Burger Combo,Main_Course,159,1,Fast,Savory,Hot,Single_Serve,Indulgent,[Gluten],1,0.01
+PFC_078,PFC,Crunchy Chicken Burger,Main_Course,149,0,Fast,Savory,Hot,Single_Serve,Indulgent,[Gluten],1,0.08
+PFC_079,PFC,Crunchy Chicken Burger Combo,Main_Course,219,0,Fast,Savory,Hot,Single_Serve,Indulgent,[Gluten],1,0.01
+PFC_080,PFC,Fish Burger,Main_Course,159,0,Fast,Savory,Hot,Single_Serve,High_Protein,"[Gluten, Seafood]",1,0.08
+PFC_081,PFC,"Margherita Pizza (8"" Regular)",Main_Course,229,1,Standard,Savory,Hot,Sharing,Indulgent,"[Gluten, Dairy]",1,0.05
+PFC_082,PFC,"Double Cheese Margherita (8"" Regular)",Main_Course,269,1,Standard,Savory,Hot,Sharing,Indulgent,"[Gluten, Dairy]",1,0.04
+PFC_083,PFC,"Peppy Paneer Pizza (8"" Regular)",Main_Course,299,1,Standard,Spicy,Hot,Sharing,Indulgent,"[Gluten, Dairy]",1,0.05
+PFC_084,PFC,"Chicken Tikka Pizza (8"" Regular)",Main_Course,299,0,Standard,Spicy,Hot,Sharing,Indulgent,"[Gluten, Dairy]",1,0.05
+PFC_085,PFC,"Hot Chicken Pizza (8"" Regular)",Main_Course,299,0,Standard,Spicy,Hot,Sharing,Indulgent,"[Gluten, Dairy]",1,0.05
+PFC_086,PFC,"Chicken Golden Delight (8"" Regular)",Main_Course,299,0,Standard,Savory,Hot,Sharing,Indulgent,"[Gluten, Dairy]",1,0.05
+PFC_087,PFC,Clear Soup (Veg),Starter,79,1,Fast,Savory,Hot,Single_Serve,Low_Calorie,[],0,0.15
+PFC_088,PFC,Manchow Soup (Chicken),Starter,129,0,Fast,Spicy,Hot,Single_Serve,High_Protein,[],0,0.18
+PFC_089,PFC,Cream of Tomato Soup,Starter,89,1,Fast,Sweet,Hot,Single_Serve,Low_Calorie,[Dairy],0,0.12
+PFC_090,PFC,Tandoor Chicken (Half),Starter,249,0,Slow,Spicy,Hot,Sharing,High_Protein,[Dairy],1,0.05
+PFC_091,PFC,Chicken Tikka Kabab (6pcs),Starter,229,0,Standard,Spicy,Hot,Sharing,High_Protein,[Dairy],1,0.1
+PFC_092,PFC,Paneer Tikka Kabab (6pcs),Starter,219,1,Standard,Spicy,Hot,Sharing,High_Protein,[Dairy],1,0.1
+PFC_093,PFC,Veg Manchurian (Dry),Starter,169,1,Standard,Savory,Hot,Sharing,Indulgent,[Gluten],1,0.12
+PFC_094,PFC,Mushroom Chilli (Dry),Starter,169,1,Standard,Spicy,Hot,Sharing,Low_Calorie,[Gluten],1,0.1
+PFC_095,PFC,Paneer 65 (6 pcs),Starter,209,1,Standard,Spicy,Hot,Sharing,High_Protein,"[Dairy, Gluten]",1,0.12
+PFC_096,PFC,Honey Chilli Potato,Starter,159,1,Fast,Sweet,Hot,Sharing,Indulgent,[Gluten],1,0.15
+PFC_097,PFC,French Fries,Starter,119,1,Fast,Savory,Hot,Single_Serve,Indulgent,[],1,0.45
+PFC_098,PFC,Chicken 65 (6pcs),Starter,239,0,Standard,Spicy,Hot,Sharing,High_Protein,[Gluten],1,0.12
+PFC_099,PFC,Chicken Lollipop (6pcs),Starter,229,0,Standard,Spicy,Hot,Sharing,High_Protein,[Gluten],1,0.15
+PFC_100,PFC,Dragon Chicken (6pcs),Starter,239,0,Standard,Spicy,Hot,Sharing,High_Protein,[Gluten],1,0.1
+PFC_101,PFC,Hot and Crispy Chicken (1pcs),Starter,109,0,Fast,Savory,Hot,Single_Serve,Indulgent,[Gluten],1,0.2
+PFC_102,PFC,Boneless Strips (6pcs),Starter,199,0,Fast,Savory,Hot,Sharing,High_Protein,[Gluten],1,0.15
+PFC_103,PFC,Strip Meal,Main_Course,189,0,Fast,Savory,Hot,Single_Serve,Indulgent,[Gluten],1,0.01
+PFC_104,PFC,Chicken Bucket (4pcs),Main_Course,349,0,Standard,Savory,Hot,Sharing,Indulgent,[Gluten],1,0.04
+PFC_105,PFC,PFC Special Meal,Main_Course,869,0,Standard,Savory,Hot,Family_Pack,Indulgent,"[Gluten, Dairy]",1,0.01
+PFC_106,PFC,Cheese Dip,Accompaniment,25,1,Fast,Savory,Cold,Single_Serve,Indulgent,[Dairy],1,0.8
+PFC_107,PFC,Peri Peri Dip,Accompaniment,25,1,Fast,Spicy,Cold,Single_Serve,Indulgent,[],1,0.7
+PFC_108,PFC,Mayo Dip,Accompaniment,20,1,Fast,Savory,Cold,Single_Serve,Indulgent,[Egg],1,0.75
+PFC_109,PFC,Schezwan Chutney,Accompaniment,25,1,Fast,Spicy,Cold,Single_Serve,Low_Calorie,[],1,0.65
