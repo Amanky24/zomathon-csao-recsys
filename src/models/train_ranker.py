@@ -1,3 +1,5 @@
+from xml.parsers.expat import model
+
 import pandas as pd
 import xgboost as xgb
 import os
@@ -91,9 +93,60 @@ def train_model():
     print(f"True Hit Rate @ 3: {hit_rate:.2f}%")
     print(f"(Out of {len(hits)} valid test sessions with purchases, the correct item was in the Top 3 for {hits.sum()} of them.)")
 
+
+    # --- FORMAL OFFLINE EVALUATION METRICS ---
+    from sklearn.metrics import roc_auc_score, ndcg_score
+    import numpy as np
+
+    print("\n--- Formal Offline Metrics ---")
+    
+    # 1. Global AUC (Area Under the ROC Curve)
+    # This evaluates how well the continuous scores separate the 1s from the 0s globally.
+    auc = roc_auc_score(df_test['actual_accepted'], df_test['predicted_score'])
+    print(f"Global AUC: {auc:.4f}")
+
+    # Variables for K-based metrics
+    K = 3
+    precisions = []
+    recalls = []
+    ndcgs = []
+
+    # Using the same valid_sessions (sessions with at least one '1') from your Hit Rate code
+    for session_id, group in valid_sessions.groupby('session_id'):
+        # Sort items by highest predicted score
+        sorted_group = group.sort_values(by='predicted_score', ascending=False)
+        actuals = sorted_group['actual_accepted'].values
+        
+        # True number of relevant items in this session
+        total_relevant = actuals.sum()
+        
+        # The actual labels of the Top K items the model chose
+        top_k_actuals = actuals[:K]
+        
+        # Precision@K: (Relevant items in Top K) / K
+        precisions.append(top_k_actuals.sum() / K)
+        
+        # Recall@K: (Relevant items in Top K) / (Total Relevant)
+        recalls.append(top_k_actuals.sum() / total_relevant)
+        
+        # NDCG@K (Requires 2D arrays for sklearn)
+        y_true_session = np.asarray([group['actual_accepted'].values])
+        y_score_session = np.asarray([group['predicted_score'].values])
+        
+        if len(actuals) > 1: # Safety check to ensure there are items to rank
+            session_ndcg = ndcg_score(y_true_session, y_score_session, k=K)
+            ndcgs.append(session_ndcg)
+
+    print(f"Precision@{K}: {np.mean(precisions):.4f}")
+    print(f"Recall@{K}:    {np.mean(recalls):.4f}")
+    print(f"NDCG@{K}:      {np.mean(ndcgs):.4f}")
+
+
+
     # Save Model & Encoders
     joblib.dump(model, 'src/models/checkpoints/ranker.pkl')
     fe.save_encoders()
+    model.save_model('src/models/checkpoints/xgb_ranker.json')
 
 if __name__ == "__main__":
     train_model()
