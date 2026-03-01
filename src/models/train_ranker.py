@@ -8,6 +8,25 @@ from sklearn.metrics import classification_report
 
 def train_model():
     os.makedirs('src\models\checkpoints', exist_ok=True)
+
+    # --- ADD THESE DEBUG LINES ---
+    file_path = 'src/models/synthetic_interactions_10k_test.csv'
+    print(f"Loading dataset from: {os.path.abspath(file_path)}")
+    df = pd.read_csv(file_path)
+    print(f"Columns found in file: {df.columns.tolist()}")
+    # -----------------------------
+    
+    # --- ADD THIS LINE TO FIX THE SPACES ---
+    df.columns = df.columns.str.strip()
+    # ---------------------------------------
+    print(f"Cleaned columns: {df.columns.tolist()}") # Verify the spaces are gone
+    
+    fe = FeatureEngineer()
+    X, y = fe.fit_transform(df)
+
+    fe = FeatureEngineer()
+    # If 'user_demographic_cluster' isn't in the list printed above, this next line will crash
+    X, y = fe.fit_transform(df)
     print("Loading 10k interactions dataset...")
     
     
