@@ -18,29 +18,44 @@ def train_model():
     
     df.columns = df.columns.str.strip()
     
+
+    # 1. Sort the dataframe by session_id (Strict requirement for XGBRanker)
+    df = df.sort_values(by='session_id').reset_index(drop=True)
     
+    # 2. Extract Features and Target
     fe = FeatureEngineer()
     X, y = fe.fit_transform(df)
     
-    # Temporal Split: shuffle=False ensures we train on the past and test on the future
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
+    # Extract the session_ids to use as our "Query IDs" (qid)
+    # --- ADD THIS LINE TO CONVERT STRINGS TO INTEGERS ---
+    df['session_id_int'] = pd.factorize(df['session_id'])[0]
+    session_ids = df['session_id_int']
+    # ----------------------------------------------------
     
-    print(f"Training XGBoost Ranker on {len(X_train)} sessions, testing on {len(X_test)}...")
+    # 3. Temporal Split
+    split_idx = int(len(df) * 0.8)
+    X_train, X_test = X.iloc[:split_idx], X.iloc[split_idx:]
+    y_train, y_test = y.iloc[:split_idx], y.iloc[split_idx:]
+    qid_train, qid_test = session_ids.iloc[:split_idx], session_ids.iloc[split_idx:]
     
-    model = xgb.XGBClassifier(
-        objective='binary:logistic',
-        eval_metric='auc',
+    print(f"Training XGBoost Ranker on {len(qid_train.unique())} sessions, testing on {len(qid_test.unique())}...")
+    
+    # 4. Initialize the True Ranker
+    model = xgb.XGBRanker(
+        objective='rank:pairwise', # Learns to push the '1' above the '0's
+        eval_metric='ndcg',        # Standard ranking metric
         learning_rate=0.05,
         max_depth=5,
-        n_estimators=100,
-        scale_pos_weight=2.25
+        n_estimators=100
     )
     
-    # Passing eval_set to monitor the AUC on both the training and temporal test sets
+    # 5. Fit using the qid (Query ID) parameter
     model.fit(
         X_train, y_train, 
-        eval_set=[(X_train, y_train), (X_test, y_test)], 
-        verbose=10  # Prints out progress every 10 trees
+        qid=qid_train,
+        eval_set=[(X_test, y_test)], 
+        eval_qid=[qid_test],
+        verbose=10 
     )
     
     print(f"\nRanker Trained Successfully!")
@@ -51,44 +66,30 @@ def train_model():
     # This shows what percentage of test data is 0s vs 1s
     print((y_test.value_counts(normalize=True) * 100).round(2).astype(str) + '%')
     
-    print("\n--- Classification Report ---")
-    y_pred = model.predict(X_test)
-    print(classification_report(y_test, y_pred))
+    
 
-    
     # --- RANKING EVALUATION BLOCK ---
-    print("\n--- Ranking Evaluation ---")
+    print("\n--- True Ranking Evaluation ---")
     
-    # 1. Get the raw probabilities (confidence scores) for Class 1
-    y_probs = model.predict_proba(X_test)[:, 1]
-    
-    # 2. Grab the corresponding rows from the original dataframe
-    # Since we didn't shuffle, the test set is exactly the last len(X_test) rows
-    test_start_idx = len(df) - len(X_test)
-    df_test = df.iloc[test_start_idx:].copy()
-    
-    # 3. Attach our model's predictions to the test data
-    df_test['predicted_prob'] = y_probs
+    y_scores = model.predict(X_test)
+    df_test = df.iloc[split_idx:].copy()
+    df_test['predicted_score'] = y_scores
     df_test['actual_accepted'] = y_test.values
+    df_test = df_test.sort_values(by=['session_id', 'predicted_score'], ascending=[True, False])
     
-    # 4. Sort the dataframe by Session ID, and then by our Model's Probability (Highest to Lowest)
-    df_test = df_test.sort_values(by=['session_id', 'predicted_prob'], ascending=[True, False])
-    
-    # 5. Calculate Hit Rate @ 3
     def check_hit_at_k(group, k=3):
-        # Take the top K highest-probability items for this session
         top_k = group.head(k)
-        # Check if the actually accepted item (1) is in those top K slots
         return top_k['actual_accepted'].sum() > 0
 
-    # Apply the function to each unique session
-    hits = df_test.groupby('session_id').apply(check_hit_at_k, k=3)
+    # 1. NEW: Filter out sessions where the user didn't accept anything
+    valid_sessions = df_test.groupby('session_id').filter(lambda x: x['actual_accepted'].sum() > 0)
+    
+    # 2. UPDATED: Calculate hits only on valid sessions
+    hits = valid_sessions.groupby('session_id').apply(check_hit_at_k, include_groups=False, k=3)
     hit_rate = hits.mean() * 100
     
-    print(f"Hit Rate @ 3: {hit_rate:.2f}%")
-    print(f"(Out of {len(hits)} total test sessions, the correct item was in the Top 3 for {hits.sum()} of them.)")
-    # --------------------------------
-
+    print(f"True Hit Rate @ 3: {hit_rate:.2f}%")
+    print(f"(Out of {len(hits)} valid test sessions with purchases, the correct item was in the Top 3 for {hits.sum()} of them.)")
 
     # Save Model & Encoders
     joblib.dump(model, 'src/models/checkpoints/ranker.pkl')
