@@ -23,25 +23,32 @@ delivery_zones = ['Office/Commercial', 'Residential/Home']
 # Extract the list of 15 Persona Names
 persona_names = list(PERSONA_CONFIG.keys())
 
-print("Spinning up 10,000 cart sessions with Persona Engine. Please wait...")
+# --- EXACT MATH DEFINITIONS ---
+NUM_SESSIONS = 2000
+CANDIDATES_PER_SESSION = 5
 
-# 2. The Monte Carlo Loop
-for i in range(10000):
+print(f"Spinning up {NUM_SESSIONS} cart sessions with {CANDIDATES_PER_SESSION} candidates each. Please wait...")
+
+# 2. The Monte Carlo Loop (Now based on Sessions)
+for i in range(NUM_SESSIONS):
     
-    # A. The Persona Injection
+    # Generate ONE Session ID for this entire group of 5 candidates
+    current_session_id = str(uuid.uuid4())
+    
+    # A. The Persona Injection (Once per session)
     chosen_persona = np.random.choice(persona_names)
     persona_rules = PERSONA_CONFIG[chosen_persona]
     
     user = {
         'user_id': f"U_{np.random.randint(1000, 9999)}",
-        'user_demographic_cluster': chosen_persona,       # <-- The Model's new secret weapon
-        'user_segment': persona_rules['segment'],         # Inherited from PDF
+        'user_demographic_cluster': chosen_persona,       
+        'user_segment': persona_rules['segment'],         
         'discount_reliance': True if chosen_persona == 'The Discount Chaser' else np.random.choice([True, False])
     }
     
-    # B. Generate the Environment Context
+    # B. Generate the Environment Context (Once per session)
     context = {
-        'session_id': str(uuid.uuid4()),
+        'session_id': current_session_id, # <-- Using the SHARED ID
         'restaurant_id': 'PFC', 
         'restaurant_type': 'QSR/Fast_Food', 
         'time_of_day': np.random.choice(time_of_day_opts),
@@ -52,7 +59,7 @@ for i in range(10000):
         'restaurant_busyness': np.random.randint(1, 11)
     }
     
-    # C. Build the Cart
+    # C. Build the Cart (Once per session)
     cart_items = menu_df.sample(n=np.random.randint(1, 5))
     
     cart = {
@@ -69,36 +76,42 @@ for i in range(10000):
         'item_trending_score': np.random.randint(10, 100)
     }
     
-    # D. Pick a Candidate Item
+    # D. Pick MULTIPLE Candidate Items
     remaining_menu = menu_df[~menu_df['item_id'].isin(cart_items['item_id'])]
-    candidate = remaining_menu.sample(1).iloc[0].to_dict()
+    num_to_sample = min(CANDIDATES_PER_SESSION, len(remaining_menu))
+    candidates_df = remaining_menu.sample(num_to_sample)
     
-    # E. Run the Upgraded Persona Logic Simulator
-    probability = simulator.calculate_probability(cart, candidate, user, context)
-    was_accepted = simulator.simulate_decision(probability)
-    
-    # F. Record the Final Interaction (Now including the Persona!)
-    interaction_record = {
-        'session_id': context['session_id'],
-        'user_id': user['user_id'],
-        'user_demographic_cluster': user['user_demographic_cluster'], # Saving for LightGBM
-        'user_segment': user['user_segment'],
-        'time_of_day': context['time_of_day'],
-        'is_weekend': context['is_weekend'],
-        'weather_proxy': context['weather_proxy'],
-        'transit_distance_km': context['transit_distance_km'],
-        'restaurant_busyness': context['restaurant_busyness'],
-        'current_cart_value_inr': cart['current_cart_value_inr'],
-        'dominant_cuisine': cart['dominant_cuisine'],
-        'candidate_item_id': candidate['item_id'],
-        'candidate_macro_cat': candidate['macro_category'],
-        'candidate_price_ratio': candidate['price'] / max(cart['current_cart_value_inr'], 1),
-        'was_accepted': was_accepted
-    }
-    
-    interactions.append(interaction_record)
+    # --- E. THE INNER LOOP (Evaluates all 5 items for this 1 session) ---
+    for _, candidate_row in candidates_df.iterrows():
+        candidate = candidate_row.to_dict()
+        
+        # Run the Upgraded Persona Logic Simulator
+        probability = simulator.calculate_probability(cart, candidate, user, context)
+        was_accepted = simulator.simulate_decision(probability)
+        
+        # F. Record the Final Interaction 
+        interaction_record = {
+            'session_id': current_session_id, # <--- All 5 items get this exact same ID
+            'user_id': user['user_id'],
+            'user_demographic_cluster': user['user_demographic_cluster'], 
+            'user_segment': user['user_segment'],
+            'time_of_day': context['time_of_day'],
+            'is_weekend': context['is_weekend'],
+            'weather_proxy': context['weather_proxy'],
+            'transit_distance_km': context['transit_distance_km'],
+            'restaurant_busyness': context['restaurant_busyness'],
+            'current_cart_value_inr': cart['current_cart_value_inr'],
+            'dominant_cuisine': cart['dominant_cuisine'],
+            'candidate_item_id': candidate['item_id'],
+            'candidate_macro_cat': candidate['macro_category'],
+            'candidate_price_ratio': candidate['price'] / max(cart['current_cart_value_inr'], 1),
+            'was_accepted': was_accepted
+        }
+        
+        interactions.append(interaction_record)
+    # --- END INNER LOOP ---
 
 # 3. Save the overwriting Dataset
 final_dataset = pd.DataFrame(interactions)
 final_dataset.to_csv('data/processed/synthetic_interactions_10k.csv', index=False)
-print(f"Success! Generated {len(final_dataset)} Persona-Driven cart sessions.")
+print(f"Success! Generated {len(final_dataset)} interactions mapped to {NUM_SESSIONS} unique sessions.")

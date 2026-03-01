@@ -10,27 +10,14 @@ def train_model():
     os.makedirs('src\models\checkpoints', exist_ok=True)
 
     # --- ADD THESE DEBUG LINES ---
-    file_path = 'src/models/synthetic_interactions_10k_test.csv'
+    file_path = 'data/processed/synthetic_interactions_10k.csv'
     print(f"Loading dataset from: {os.path.abspath(file_path)}")
     df = pd.read_csv(file_path)
-    print(f"Columns found in file: {df.columns.tolist()}")
-    # -----------------------------
     
-    # --- ADD THIS LINE TO FIX THE SPACES ---
+    print(f"TOTAL UNIQUE SESSIONS IN FILE: {df['session_id'].nunique()}")
+    
     df.columns = df.columns.str.strip()
-    # ---------------------------------------
-    print(f"Cleaned columns: {df.columns.tolist()}") # Verify the spaces are gone
     
-    fe = FeatureEngineer()
-    X, y = fe.fit_transform(df)
-
-    fe = FeatureEngineer()
-    # If 'user_demographic_cluster' isn't in the list printed above, this next line will crash
-    X, y = fe.fit_transform(df)
-    print("Loading 10k interactions dataset...")
-    
-    
-    df = pd.read_csv('src\models\synthetic_interactions_10k_test.csv')
     
     fe = FeatureEngineer()
     X, y = fe.fit_transform(df)
@@ -67,7 +54,6 @@ def train_model():
     print("\n--- Classification Report ---")
     y_pred = model.predict(X_test)
     print(classification_report(y_test, y_pred))
-
 
     
     # --- RANKING EVALUATION BLOCK ---
