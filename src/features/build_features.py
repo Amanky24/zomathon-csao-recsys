@@ -7,12 +7,11 @@ class FeatureEngineer:
     """
     Feature Engineering Pipeline for the CSAO Recommendation System.
     Transforms raw synthetic cart logs into a numerical feature matrix 
-    optimized for the Stage 2 XGBoost/LightGBM Ranker.
     """
     def __init__(self):
         self.encoders = {}
         
-        # 1. Categorical Columns (Sourced directly from generate_dataset.py)
+        # 1. Categorical Columns
         self.cat_cols = [
             'user_demographic_cluster', 
             'user_segment', 
@@ -55,7 +54,7 @@ class FeatureEngineer:
         feature_cols = self.cat_cols + self.num_cols + self.bool_cols
         X = processed_df[feature_cols]
         
-        # Extract target variable if it exists (it will during training)
+        # Extract target variable if it exists
         if 'was_accepted' in processed_df.columns:
             y = processed_df['was_accepted'].astype(int)
             return X, y

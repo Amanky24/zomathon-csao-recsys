@@ -15,6 +15,7 @@ feature_encoders = joblib.load('src/models/checkpoints/feature_encoders.pkl')
 
 print("Loading Menu Dictionary...")
 menu_df = pd.read_csv('data/raw/pfc_menu.csv')
+
 # Catch both 'item name' and 'item_name' just in case
 if 'item name' in menu_df.columns:
     menu_df.rename(columns={'item name': 'item_name'}, inplace=True)
@@ -48,6 +49,7 @@ class RecommendationRequest(BaseModel):
 # 4. The Prediction Endpoint
 @app.post("/recommend")
 def get_recommendations(request: RecommendationRequest):
+
     # Flatten the incoming JSON into a list of dictionaries
     interactions = []
     for candidate in request.candidates:
@@ -58,33 +60,32 @@ def get_recommendations(request: RecommendationRequest):
     # Convert to Pandas DataFrame
     df = pd.DataFrame(interactions)
     
-    # Process features using your saved encoders (Simplifying your FeatureEngineer logic)
+    # Process features using your saved encoders 
     for col, le in feature_encoders.items():
         if col in df.columns:
-            # 1. Force to string and strip any accidental spaces from the JSON
+            
             df[col] = df[col].astype(str).str.strip()
             
-            # 2. The Bulletproof Check: If the label is unknown, use a safe default
+           
             known_classes = set(le.classes_)
             df[col] = df[col].apply(lambda x: x if x in known_classes else le.classes_[0])
             
-            # 3. Now it is 100% safe to transform
+            
             df[col] = le.transform(df[col])
             
     # Convert booleans
     if 'is_weekend' in df.columns:
         df['is_weekend'] = df['is_weekend'].astype(int)
         
-    # Ensure column order matches training exactly
+    # Ensuring column order matches training exactly
     features = ranker_model.feature_names_in_
     X = df[features]
     
-    # Predict continuous ranking scores
-    # Predict and sort
-    scores = ranker_model.predict(X)
-    df['predicted_score'] = scores # Let Pandas handle the array!
     
-    # Return the original candidate IDs sorted by the model's score
+    scores = ranker_model.predict(X)
+    df['predicted_score'] = scores # array
+    
+    # Returning the original candidate IDs sorted by the model's score
     ranked_candidates = df.sort_values(by='predicted_score', ascending=False)
     
     results = []
@@ -97,7 +98,7 @@ def get_recommendations(request: RecommendationRequest):
         results.append({
             "rank": rank,
             "item_id": item_id,
-            "item_name": dish_name, # <-- The new human-readable name!
+            "item_name": dish_name, # human-readable name
             "score": round(float(row['predicted_score']), 4)
         })
         

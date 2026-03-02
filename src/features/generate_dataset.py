@@ -23,16 +23,16 @@ delivery_zones = ['Office/Commercial', 'Residential/Home']
 # Extract the list of 15 Persona Names
 persona_names = list(PERSONA_CONFIG.keys())
 
-# --- EXACT MATH DEFINITIONS ---
+
 NUM_SESSIONS = 2000
 CANDIDATES_PER_SESSION = 5
 
 print(f"Spinning up {NUM_SESSIONS} cart sessions with {CANDIDATES_PER_SESSION} candidates each. Please wait...")
 
-# 2. The Monte Carlo Loop (Now based on Sessions)
+# 2. The Monte Carlo Loop 
 for i in range(NUM_SESSIONS):
     
-    # Generate ONE Session ID for this entire group of 5 candidates
+    # Generating ONE Session ID for this entire group of 5 candidates
     current_session_id = str(uuid.uuid4())
     
     # A. The Persona Injection (Once per session)
@@ -81,17 +81,17 @@ for i in range(NUM_SESSIONS):
     num_to_sample = min(CANDIDATES_PER_SESSION, len(remaining_menu))
     candidates_df = remaining_menu.sample(num_to_sample)
     
-    # --- E. THE INNER LOOP (Evaluates all 5 items for this 1 session) ---
+    # --- E. Evaluates all 5 items for this 1 session ---
     for _, candidate_row in candidates_df.iterrows():
         candidate = candidate_row.to_dict()
         
-        # Run the Upgraded Persona Logic Simulator
+        # Upgraded Persona Logic Simulator
         probability = simulator.calculate_probability(cart, candidate, user, context)
         was_accepted = simulator.simulate_decision(probability)
         
-        # F. Record the Final Interaction 
+        # F. Recording the Final Interaction 
         interaction_record = {
-            'session_id': current_session_id, # <--- All 5 items get this exact same ID
+            'session_id': current_session_id,
             'user_id': user['user_id'],
             'user_demographic_cluster': user['user_demographic_cluster'], 
             'user_segment': user['user_segment'],
@@ -109,9 +109,9 @@ for i in range(NUM_SESSIONS):
         }
         
         interactions.append(interaction_record)
-    # --- END INNER LOOP ---
+    
 
-# 3. Save the overwriting Dataset
+# 3. Saving the Dataset
 final_dataset = pd.DataFrame(interactions)
 final_dataset.to_csv('data/processed/synthetic_interactions_10k.csv', index=False)
 print(f"Success! Generated {len(final_dataset)} interactions mapped to {NUM_SESSIONS} unique sessions.")

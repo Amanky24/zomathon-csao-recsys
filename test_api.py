@@ -2,10 +2,10 @@ import requests
 import json
 import uuid
 
-# The local address where your API is listening
+# The local address where API is listening
 API_URL = "http://127.0.0.1:8000/recommend"
 
-# This is the exact JSON structure your API is expecting
+# This is the exact JSON structure API is expecting
 # Imagine a "Discount Chaser" is ordering Late Night food on a rainy weekend
 payload = {
     "session_id": str(uuid.uuid4()),

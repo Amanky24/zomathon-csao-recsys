@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import os
 
-# Importing your existing configuration to ensure logic parity
+
 from src.features.generate_synthetic_carts import PERSONA_CONFIG
 
 class CandidateGenerator:
@@ -11,13 +11,11 @@ class CandidateGenerator:
     Filters the PFC menu down to a relevant subset based on co-occurrence and personas.
     """
     def __init__(self, interaction_data_path, menu_data_path):
-        """
-        Initializes retrieval sets using your processed 10k interaction data.
-        """
+        
         self.interactions_df = pd.read_csv(interaction_data_path)
         self.menu_df = pd.read_csv(menu_data_path)
         
-        # Consistent with your generate_dataset.py renaming logic
+        
         self.menu_df.rename(columns={
             'item name': 'item_name', 
             'flavor profile': 'flavor_profile', 
@@ -29,7 +27,7 @@ class CandidateGenerator:
     def _build_co_occurrence_map(self):
         """
         Identifies which items are accepted most frequently given a dominant cuisine.
-        Matches 'dominant_cuisine' and 'candidate_item_id' from your CSV schema.
+        Matches 'dominant_cuisine' and 'candidate_item_id' from the CSV schema.
         """
         # Only learn from successful user conversions
         success_interactions = self.interactions_df[self.interactions_df['was_accepted'] == 1]
@@ -80,20 +78,3 @@ class CandidateGenerator:
             filtered_candidates.append(item)
 
         return filtered_candidates[:top_k]
-
-# For Aman's testing in Jupyter/Sunday Morning session
-# if __name__ == "__main__":
-#     # Paths relative to the root of your repo
-#     gen = CandidateGenerator(
-#         'data/processed/synthetic_interactions_10k.csv', 
-#         'data/raw/pfc_menu.csv'
-#     )
-    
-#     # Simulate a cart with a Main Course for a Strict Veg persona
-#     test_cart = {'dominant_cuisine': 'Main_Course'}
-#     persona = 'The Strict Veg Family'
-    
-#     candidates = gen.get_candidates(test_cart, persona)
-#     print(f"Retrieved {len(candidates)} candidates for {persona}:")
-#     for c in candidates:
-#         print(f"- {c['item_name']} ({c['macro_category']}) | Veg: {c['is_veg']}")

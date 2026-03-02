@@ -28,7 +28,7 @@ PERSONA_CONFIG = {
         'rejects': ['Slow', 'Dessert']
     },
     'The Discount Chaser': {
-        'segment': 'Budget', 'dietary': 'Mixed', 'price_tolerance': 0.0, # Cap at 40 INR handled in logic
+        'segment': 'Budget', 'dietary': 'Mixed', 'price_tolerance': 0.0,
         'boosts': {'Accompaniment/Dip': 0.25, 'Accompaniment': 0.10},
         'rejects': ['High-Price'] 
     },
@@ -101,7 +101,7 @@ class CSAODataSimulator:
         """
         Calculates the conditional probability using strict Persona mapping and Context.
         """
-        # 1. Initialize with Global Baseline Matrix
+        # 1. Initializing with Global Baseline Matrix
         dominant_cat = cart['dominant_cuisine'] 
         candidate_cat = candidate['macro_category']
         prob = candidate['restaurant_item_attach']
@@ -109,17 +109,17 @@ class CSAODataSimulator:
         if dominant_cat in self.base_matrix and candidate_cat in self.base_matrix[dominant_cat]:
             prob += self.base_matrix[dominant_cat][candidate_cat]
 
-        # 2. --- THE NEW PERSONA ENGINE ---
+        
         persona_name = user['user_demographic_cluster']
         
-        # If the user has a known persona, apply their strict PDF rules
+        # If the user has a known persona,
         if persona_name in PERSONA_CONFIG:
             persona_rules = PERSONA_CONFIG[persona_name]
             
             # A. Price Tolerance Logic
             cart_val = max(cart['current_cart_value_inr'], 1) # Prevent divide-by-zero
             if (candidate['price'] / cart_val) > persona_rules['price_tolerance']:
-                prob = 0.02 # They will almost never accept an item this expensive relative to their cart
+                prob = 0.02
                 
             # B. Affinity Boosts
             if candidate_cat in persona_rules['boosts']:
@@ -138,7 +138,7 @@ class CSAODataSimulator:
                 prob = 0.0 # Party host block
 
         # 3. Apply Remaining Spatio-Temporal & Logistics Rules
-        # (These apply to the physical world, regardless of the user's persona)
+        
         if context['weather_proxy'] == 'Rainy/Cold' and candidate['temperature_state'] == 'Hot':
             prob += 0.30 
             

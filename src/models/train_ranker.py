@@ -11,7 +11,7 @@ from sklearn.metrics import classification_report
 def train_model():
     os.makedirs('src\models\checkpoints', exist_ok=True)
 
-    # --- ADD THESE DEBUG LINES ---
+    
     file_path = 'data/processed/synthetic_interactions_10k.csv'
     print(f"Loading dataset from: {os.path.abspath(file_path)}")
     df = pd.read_csv(file_path)
@@ -21,15 +21,15 @@ def train_model():
     df.columns = df.columns.str.strip()
     
 
-    # 1. Sort the dataframe by session_id (Strict requirement for XGBRanker)
+    # 1. Sort the dataframe by session_id
     df = df.sort_values(by='session_id').reset_index(drop=True)
     
     # 2. Extract Features and Target
     fe = FeatureEngineer()
     X, y = fe.fit_transform(df)
     
-    # Extract the session_ids to use as our "Query IDs" (qid)
-    # --- ADD THIS LINE TO CONVERT STRINGS TO INTEGERS ---
+    # Extract the session_ids to use as "Query IDs" (qid)
+    
     df['session_id_int'] = pd.factorize(df['session_id'])[0]
     session_ids = df['session_id_int']
     # ----------------------------------------------------
@@ -83,10 +83,10 @@ def train_model():
         top_k = group.head(k)
         return top_k['actual_accepted'].sum() > 0
 
-    # 1. NEW: Filter out sessions where the user didn't accept anything
+    # Filter out sessions where the user didn't accept anything
     valid_sessions = df_test.groupby('session_id').filter(lambda x: x['actual_accepted'].sum() > 0)
     
-    # 2. UPDATED: Calculate hits only on valid sessions
+
     hits = valid_sessions.groupby('session_id').apply(check_hit_at_k, include_groups=False, k=3)
     hit_rate = hits.mean() * 100
     
@@ -101,7 +101,6 @@ def train_model():
     print("\n--- Formal Offline Metrics ---")
     
     # 1. Global AUC (Area Under the ROC Curve)
-    # This evaluates how well the continuous scores separate the 1s from the 0s globally.
     auc = roc_auc_score(df_test['actual_accepted'], df_test['predicted_score'])
     print(f"Global AUC: {auc:.4f}")
 
@@ -111,7 +110,7 @@ def train_model():
     recalls = []
     ndcgs = []
 
-    # Using the same valid_sessions (sessions with at least one '1') from your Hit Rate code
+    # Using the same valid_sessions (sessions with at least one '1') from the Hit Rate code
     for session_id, group in valid_sessions.groupby('session_id'):
         # Sort items by highest predicted score
         sorted_group = group.sort_values(by='predicted_score', ascending=False)
